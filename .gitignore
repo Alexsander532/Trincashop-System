@@ -1,0 +1,15 @@
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build and Dependencies (handled in subfolders too, but for safety)
+**/node_modules/
+**/target/
+**/dist/
+**/.angular/

@@ -1,0 +1,467 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ===== TOKENS DE DESIGN – Paletas Trinca ===== */
+:root {
+    /* Cores de fundo – Tema Escuro (Padrão) */
+    --color-bg: #0c1425;
+    --color-bg-card: rgba(14, 22, 42, 0.88);
+    --color-bg-card-hover: rgba(20, 30, 55, 0.95);
+    --color-surface: #111b30;
+    --color-border: rgba(255, 255, 255, 0.07);
+    --color-border-hover: rgba(255, 255, 255, 0.14);
+
+    /* Cor primária – Vermelho Trinca (Escuro) */
+    --color-primary: #e63946;
+    --color-primary-glow: rgba(230, 57, 70, 0.18);
+    --color-primary-dark: #c1121f;
+    --color-primary-light: #ff6b6b;
+
+    /* Cor secundária – Azul Trinca (Escuro) */
+    --color-secondary: #2563eb;
+    --color-secondary-glow: rgba(37, 99, 235, 0.18);
+    --color-secondary-dark: #1d4ed8;
+    --color-secondary-light: #60a5fa;
+
+    /* Texto (Escuro) */
+    --color-text: #f1f5f9;
+    --color-text-secondary: #94a3b8;
+    --color-text-muted: #64748b;
+
+    /* Efeitos Escuro */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+    --shadow-glow-primary: 0 0 20px rgba(230, 57, 70, 0.25);
+    --shadow-glow-secondary: 0 0 20px rgba(37, 99, 235, 0.25);
+    --shadow-glow-amber: 0 0 20px rgba(245, 158, 11, 0.2);
+
+    /* Status (Compartilhado/Ajustado) */
+    --color-amber: #f59e0b;
+    --color-amber-glow: rgba(245, 158, 11, 0.15);
+    --color-success: #22c55e;
+    --color-success-glow: rgba(34, 197, 94, 0.15);
+    --color-danger: #ef4444;
+    --color-danger-glow: rgba(239, 68, 68, 0.15);
+
+    /* Tipografia e Dimensões */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="light"] {
+    /* Cores de fundo – Tema Claro */
+    --color-bg: #F5F5F5;
+    --color-bg-card: #FFFFFF;
+    --color-bg-card-hover: #FFFFFF;
+    --color-surface: #FFFFFF;
+    --color-border: rgba(0, 0, 0, 0.08);
+    --color-border-hover: rgba(0, 0, 0, 0.15);
+
+    /* Cor primária – Vermelho Trinca (Claro) */
+    --color-primary: #E53935;
+    --color-primary-glow: rgba(229, 57, 53, 0.18);
+    --color-primary-dark: #D32F2F;
+    --color-primary-light: #EF5350;
+
+    /* Cor secundária – Azul Trinca (Claro) */
+    --color-secondary: #1E88E5;
+    --color-secondary-glow: rgba(30, 136, 229, 0.18);
+    --color-secondary-dark: #1565C0;
+    --color-secondary-light: #42A5F5;
+
+    /* Texto (Claro) */
+    --color-text: #212121;
+    --color-text-secondary: #757575;
+    --color-text-muted: #9E9E9E;
+
+    /* Efeitos Claro */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-glow-primary: 0 4px 14px rgba(229, 57, 53, 0.3);
+    --shadow-glow-secondary: 0 4px 14px rgba(30, 136, 229, 0.3);
+    --shadow-glow-amber: 0 4px 14px rgba(245, 124, 0, 0.3);
+
+    /* Status Claro */
+    --color-amber: #F57C00;
+    --color-success: #43A047;
+    --color-danger: #D32F2F;
+}
+
+/* ===== RESET E BASE ===== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-family);
+    background: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+}
+
+/* Transition global smooth setup */
+body {
+    transition: background-color var(--transition-normal), color var(--transition-normal);
+}
+
+/* Fundo animado com gradientes sutis – escuro */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(230, 57, 70, 0.05) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 90%, rgba(37, 99, 235, 0.05) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+    transition: opacity var(--transition-normal);
+}
+
+[data-theme="light"] body::before {
+    opacity: 0;
+    /* Desativa no tema claro */
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* ===== SCROLLBAR CUSTOM ===== */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-text-muted);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-secondary);
+}
+
+/* ===== UTILIDADES ===== */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+}
+
+.glass {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.glass:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* ===== BOTÕES ===== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    font-family: var(--font-family);
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-sm);
+    /* 8px conforme solicitado */
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    outline: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: #FFFFFF;
+}
+
+.btn-primary:hover {
+    background-color: var(--color-primary-dark);
+    transform: scale(1.03);
+}
+
+.btn-secondary {
+    background-color: var(--color-secondary);
+    color: #FFFFFF;
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-secondary-dark);
+    transform: scale(1.03);
+}
+
+.btn-danger {
+    background-color: var(--color-danger);
+    color: #FFFFFF;
+}
+
+.btn-amber {
+    background-color: var(--color-amber);
+    color: #FFFFFF;
+}
+
+.btn-blue {
+    background-color: var(--color-secondary);
+    color: #FFFFFF;
+}
+
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 0.8rem;
+}
+
+/* ===== INPUTS ===== */
+.input {
+    width: 100%;
+    padding: 12px 16px;
+    font-family: var(--font-family);
+    font-size: 0.9rem;
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-normal);
+    outline: none;
+}
+
+.input:focus {
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 0 3px var(--color-secondary-glow);
+}
+
+.input::placeholder {
+    color: var(--color-text-muted);
+}
+
+/* ===== TABELA ===== */
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    padding: 14px 18px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    background: var(--color-surface);
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+}
+
+td {
+    padding: 14px 18px;
+    font-size: 0.875rem;
+    border-bottom: 1px solid var(--color-border);
+    transition: background var(--transition-fast);
+}
+
+tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+/* ===== BADGES ===== */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    line-height: 1;
+}
+
+.badge-pending {
+    background-color: var(--color-secondary);
+    color: #FFFFFF;
+}
+
+.badge-paid {
+    background-color: var(--color-success);
+    color: #FFFFFF;
+}
+
+.badge-released {
+    background-color: var(--color-secondary-dark);
+    /* Using dark blue for released to distinguish */
+    color: #FFFFFF;
+}
+
+.badge-active {
+    background-color: var(--color-success);
+    color: #FFFFFF;
+}
+
+.badge-inactive {
+    background-color: var(--color-danger);
+    color: #FFFFFF;
+}
+
+/* ===== ANIMAÇÕES ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.5s ease-out both;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out both;
+}
+
+/* Stagger das animações para grids */
+.stagger-1 {
+    animation-delay: 0.05s;
+}
+
+.stagger-2 {
+    animation-delay: 0.1s;
+}
+
+.stagger-3 {
+    animation-delay: 0.15s;
+}
+
+.stagger-4 {
+    animation-delay: 0.2s;
+}
+
+.stagger-5 {
+    animation-delay: 0.25s;
+}
+
+.stagger-6 {
+    animation-delay: 0.3s;
+}
+
+.stagger-7 {
+    animation-delay: 0.35s;
+}
+
+.stagger-8 {
+    animation-delay: 0.4s;
+}
+
+/* ===== RESPONSIVO ===== */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 16px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 0.8rem;
+    }
+
+    th,
+    td {
+        padding: 10px 12px;
+        font-size: 0.8rem;
+    }
+}
