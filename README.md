@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🧊 TrincaShop
+# TrincaShop
 
 ### Sistema de Vendas Automatizada para a Geladeira do Trincabotz — CEFET-MG
 
