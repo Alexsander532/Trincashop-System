@@ -58,11 +58,32 @@ export const mockApiInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>,
         const product = products.find(p => p.id === productId);
         return of(new HttpResponse({
             status: 200,
-            body: { id: Math.floor(Math.random() * 1000), productName: product?.name, totalValue: product?.price, status: 'PENDING' }
+            body: {
+                id: Math.floor(Math.random() * 9000) + 1000,
+                productName: product?.name,
+                productPrice: product?.price,
+                status: 'PENDING',
+                createdAt: new Date().toISOString()
+            }
         })).pipe(delay(1000));
     }
 
-    // 4. Admin Stats
+    // 4. Get Single Order (Página de confirmação)
+    if (url.match(/\/api\/orders\/\d+$/) && method === 'GET') {
+        const orderId = url.split('/').pop();
+        return of(new HttpResponse({
+            status: 200,
+            body: {
+                id: Number(orderId),
+                productName: 'Coca-Cola 350ml',
+                productPrice: 5.00,
+                status: 'PENDING',
+                createdAt: new Date().toISOString()
+            }
+        })).pipe(delay(500));
+    }
+
+    // 5. Admin Stats
     if (url.endsWith('/api/admin/orders/stats') && method === 'GET') {
         return of(new HttpResponse({
             status: 200,
