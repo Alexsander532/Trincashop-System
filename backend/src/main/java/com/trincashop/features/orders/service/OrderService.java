@@ -22,6 +22,7 @@ public class OrderService {
         this.productService = productService;
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public Order criarPedido(Long productId) {
         Product product = productService.buscarPorId(productId);
 
@@ -54,6 +55,7 @@ public class OrderService {
         return orderRepository.findByStatus(status);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public Order atualizarStatus(Long id, String novoStatus) {
         Order order = buscarPorId(id);
 

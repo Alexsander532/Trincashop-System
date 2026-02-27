@@ -29,6 +29,7 @@ public class ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado com ID: " + id));
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public Product salvar(Product product) {
         if (product.getActive() == null) {
             product.setActive(true);
@@ -36,6 +37,7 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public Product atualizar(Long id, Product productAtualizado) {
         Product existente = buscarPorId(id);
         existente.setName(productAtualizado.getName());

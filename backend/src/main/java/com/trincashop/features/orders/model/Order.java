@@ -1,10 +1,15 @@
 package com.trincashop.features.orders.model;
 
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "orders")
 public class Order {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long productId;
     private String productName;
@@ -12,7 +17,8 @@ public class Order {
     private String status; // PENDING, PAID, RELEASED
     private LocalDateTime createdAt;
 
-    public Order() {}
+    public Order() {
+    }
 
     public Order(Long id, Long productId, String productName, BigDecimal productPrice, String status) {
         this.id = id;
@@ -25,21 +31,51 @@ public class Order {
 
     // Getters e Setters
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public Long getProductId() { return productId; }
-    public void setProductId(Long productId) { this.productId = productId; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getProductName() { return productName; }
-    public void setProductName(String productName) { this.productName = productName; }
+    public Long getProductId() {
+        return productId;
+    }
 
-    public BigDecimal getProductPrice() { return productPrice; }
-    public void setProductPrice(BigDecimal productPrice) { this.productPrice = productPrice; }
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public String getProductName() {
+        return productName;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public BigDecimal getProductPrice() {
+        return productPrice;
+    }
+
+    public void setProductPrice(BigDecimal productPrice) {
+        this.productPrice = productPrice;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
