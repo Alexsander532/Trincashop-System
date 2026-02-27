@@ -3,13 +3,15 @@ package com.trincashop.features.orders.service;
 import com.trincashop.core.exception.BadRequestException;
 import com.trincashop.core.exception.ResourceNotFoundException;
 import com.trincashop.features.orders.model.Order;
+import com.trincashop.features.orders.model.OrderStatus;
 import com.trincashop.features.orders.repository.OrderRepository;
 import com.trincashop.features.products.model.Product;
 import com.trincashop.features.products.service.ProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Service
 public class OrderService {
@@ -38,7 +40,7 @@ public class OrderService {
         product.setStock(product.getStock() - 1);
         productService.salvar(product);
 
-        Order order = new Order(null, product.getId(), product.getName(), product.getPrice(), "PENDING");
+        Order order = new Order(null, product.getId(), product.getName(), product.getPrice(), OrderStatus.PENDING);
         return orderRepository.save(order);
     }
 
@@ -47,33 +49,36 @@ public class OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado com ID: " + id));
     }
 
-    public List<Order> listarTodos() {
-        return orderRepository.findAll();
+    public Page<Order> listarTodos(Pageable pageable) {
+        return orderRepository.findAll(pageable);
     }
 
-    public List<Order> listarPorStatus(String status) {
-        return orderRepository.findByStatus(status);
+    public Page<Order> listarPorStatus(OrderStatus status, Pageable pageable) {
+        return orderRepository.findByStatus(status, pageable);
     }
 
     @org.springframework.transaction.annotation.Transactional
-    public Order atualizarStatus(Long id, String novoStatus) {
+    public Order atualizarStatus(Long id, OrderStatus novoStatus) {
         Order order = buscarPorId(id);
 
         // Validar transições de status
-        String statusAtual = order.getStatus();
-        if ("PAID".equalsIgnoreCase(novoStatus) && !"PENDING".equalsIgnoreCase(statusAtual)) {
+        OrderStatus statusAtual = order.getStatus();
+        if (novoStatus == OrderStatus.PAID && statusAtual != OrderStatus.PENDING) {
             throw new BadRequestException("Só é possível marcar como PAGO pedidos com status PENDENTE");
         }
-        if ("RELEASED".equalsIgnoreCase(novoStatus) && !"PAID".equalsIgnoreCase(statusAtual)) {
+        if (novoStatus == OrderStatus.RELEASED && statusAtual != OrderStatus.PAID) {
             throw new BadRequestException("Só é possível liberar pedidos já pagos");
         }
+        if (novoStatus == OrderStatus.CANCELLED && statusAtual == OrderStatus.RELEASED) {
+            throw new BadRequestException("Não é possível cancelar pedidos já liberados");
+        }
 
-        order.setStatus(novoStatus.toUpperCase());
+        order.setStatus(novoStatus);
         return orderRepository.save(order);
     }
 
     public BigDecimal calcularTotalArrecadado() {
-        return orderRepository.findByStatus("PAID").stream()
+        return orderRepository.findAllByStatus(OrderStatus.PAID).stream()
                 .map(Order::getProductPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }

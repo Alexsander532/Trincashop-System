@@ -4,4 +4,6 @@ export interface Product {
   price: number;
   stock: number;
   active: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }

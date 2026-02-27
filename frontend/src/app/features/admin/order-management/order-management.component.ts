@@ -26,6 +26,9 @@ import { Order } from '../../../core/models/order.model';
           <button class="btn btn-sm"
                   [class]="filtroAtual === 'PAID' ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-secondary'"
                   (click)="filtrar('PAID')">✅ Pagos</button>
+          <button class="btn btn-sm"
+                  [class]="filtroAtual === 'CANCELLED' ? 'btn btn-sm btn-danger' : 'btn btn-sm btn-secondary'"
+                  (click)="filtrar('CANCELLED')">❌ Cancelados</button>
         </div>
       </div>
 
@@ -64,9 +67,18 @@ import { Order } from '../../../core/models/order.model';
                           (click)="liberar(order.id)">
                     🔓 Liberar
                   </button>
+                  <button *ngIf="order.status === 'PENDING' || order.status === 'PAID'"
+                          class="btn btn-sm btn-danger"
+                          (click)="cancelar(order.id)">
+                    ❌ Cancelar
+                  </button>
                   <span *ngIf="order.status === 'RELEASED'"
                         style="font-size: 0.8rem; color: var(--color-text-muted);">
                     Concluído ✔
+                  </span>
+                  <span *ngIf="order.status === 'CANCELLED'"
+                        style="font-size: 0.8rem; color: var(--color-danger);">
+                    Cancelado ❌
                   </span>
                 </div>
               </td>
@@ -148,7 +160,7 @@ export class OrderManagementComponent implements OnInit {
 
   carregarPedidos(): void {
     this.apiService.getAdminOrders(this.filtroAtual || undefined).subscribe({
-      next: (orders: Order[]) => this.orders = orders
+      next: (page) => this.orders = page.content
     });
   }
 
@@ -169,11 +181,20 @@ export class OrderManagementComponent implements OnInit {
     });
   }
 
+  cancelar(id: number): void {
+    if (confirm('Tem certeza que deseja cancelar este pedido?')) {
+      this.apiService.updateOrderStatus(id, 'CANCELLED').subscribe({
+        next: () => this.carregarPedidos()
+      });
+    }
+  }
+
   getStatusLabel(status: string): string {
     switch (status) {
       case 'PENDING': return '⏳ Pendente';
       case 'PAID': return '✅ Pago';
       case 'RELEASED': return '🔓 Liberado';
+      case 'CANCELLED': return '❌ Cancelado';
       default: return status;
     }
   }

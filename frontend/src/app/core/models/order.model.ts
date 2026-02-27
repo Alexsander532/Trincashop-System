@@ -3,8 +3,9 @@ export interface Order {
     productId: number;
     productName: string;
     productPrice: number;
-    status: 'PENDING' | 'PAID' | 'RELEASED';
+    status: 'PENDING' | 'PAID' | 'RELEASED' | 'CANCELLED';
     createdAt: string;
+    updatedAt?: string;
 }
 
 export interface OrderStats {

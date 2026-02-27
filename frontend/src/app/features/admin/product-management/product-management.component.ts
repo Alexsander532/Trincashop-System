@@ -188,7 +188,7 @@ export class ProductManagementComponent implements OnInit {
 
   carregarProdutos(): void {
     this.apiService.getAdminProducts().subscribe({
-      next: (products: Product[]) => this.products = products
+      next: (page) => this.products = page.content
     });
   }
 

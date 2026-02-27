@@ -2,15 +2,18 @@ package com.trincashop.core.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import org.springframework.security.core.GrantedAuthority;
 
 @Component
 public class JwtUtil {
@@ -19,18 +22,37 @@ public class JwtUtil {
     private String secretKey;
 
     @Value("${jwt.expiration}")
-    private long expirationMs;
+    private long jwtExpirationMs;
 
-    private Key getSigningKey() {
+    @Value("${jwt.refreshExpiration:604800000}") // Default 7 dias
+    private long refreshExpirationMs;
+
+    private final Set<String> blacklistedTokens = ConcurrentHashMap.newKeySet();
+
+    private javax.crypto.SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
-    public String generateToken(String email) {
+    public String generateToken(UserDetails userDetails) {
+        return buildToken(userDetails, jwtExpirationMs);
+    }
+
+    public String generateRefreshToken(UserDetails userDetails) {
+        return buildToken(userDetails, refreshExpirationMs);
+    }
+
+    private String buildToken(UserDetails userDetails, long expirationTime) {
+        List<String> roles = userDetails.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+
         return Jwts.builder()
-                .setSubject(email)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .subject(userDetails.getUsername())
+                .claim("roles", roles)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expirationTime))
+                .signWith(getSigningKey())
                 .compact();
     }
 
@@ -38,18 +60,36 @@ public class JwtUtil {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public boolean validateToken(String token, UserDetails userDetails) {
-        final String email = extractEmail(token);
-        return email.equals(userDetails.getUsername()) && !isTokenExpired(token);
+    @SuppressWarnings("unchecked")
+    public List<String> extractRoles(String token) {
+        Claims claims = extractAllClaims(token);
+        return (List<String>) claims.get("roles");
+    }
+
+    public boolean validateToken(String token, String email) {
+        if (isBlacklisted(token))
+            return false;
+        final String tokenEmail = extractEmail(token);
+        return tokenEmail.equals(email) && !isTokenExpired(token);
     }
 
     public boolean validateToken(String token) {
+        if (isBlacklisted(token))
+            return false;
         try {
             extractAllClaims(token);
-            return !isTokenExpired(token);
+            return true;
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public void blacklistToken(String token) {
+        blacklistedTokens.add(token);
+    }
+
+    public boolean isBlacklisted(String token) {
+        return blacklistedTokens.contains(token);
     }
 
     private boolean isTokenExpired(String token) {
@@ -61,10 +101,10 @@ public class JwtUtil {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 }

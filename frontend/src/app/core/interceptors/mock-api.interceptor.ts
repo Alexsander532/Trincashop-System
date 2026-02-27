@@ -8,8 +8,8 @@ import { delay, of } from 'rxjs';
 export const mockApiInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
     const { url, method } = req;
 
-    // Só intercepta chamadas para o nosso "backend" (localhost:8080)
-    if (!url.includes('localhost:8080/api')) {
+    // Só intercepta chamadas para o nosso "backend" se usarem a estrutura de API
+    if (!url.includes('/api')) {
         return next(req);
     }
 
@@ -48,8 +48,8 @@ export const mockApiInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>,
     }
 
     // 2. Public Products
-    if (url.endsWith('/api/products') && method === 'GET') {
-        return of(new HttpResponse({ status: 200, body: products })).pipe(delay(500));
+    if (url.includes('/api/products') && method === 'GET') {
+        return of(new HttpResponse({ status: 200, body: { content: products.filter(p => p.active), totalElements: products.length, totalPages: 1 } })).pipe(delay(500));
     }
 
     // 3. Create Order
@@ -92,13 +92,18 @@ export const mockApiInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>,
     }
 
     // 5. Admin Products
-    if (url.endsWith('/api/admin/products') && method === 'GET') {
-        return of(new HttpResponse({ status: 200, body: products })).pipe(delay(500));
+    if (url.includes('/api/admin/products') && method === 'GET') {
+        return of(new HttpResponse({ status: 200, body: { content: products, totalElements: products.length, totalPages: 1 } })).pipe(delay(500));
     }
 
     // 6. Admin Orders
-    if (url.includes('/api/admin/orders') && !url.endsWith('/stats') && method === 'GET') {
-        return of(new HttpResponse({ status: 200, body: orders })).pipe(delay(500));
+    if (url.includes('/api/admin/orders') && !url.includes('/stats') && method === 'GET') {
+        let filteredOrders = orders;
+        const statusMatch = url.match(/status=([^&]+)/);
+        if (statusMatch) {
+            filteredOrders = orders.filter(o => o.status === statusMatch[1]);
+        }
+        return of(new HttpResponse({ status: 200, body: { content: filteredOrders, totalElements: filteredOrders.length, totalPages: 1 } })).pipe(delay(500));
     }
 
     // Padrão: deixa passar para o backend real se não casar com nada (embora em Vercel vá falhar se não houver backend)

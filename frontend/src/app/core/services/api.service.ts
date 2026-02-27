@@ -3,20 +3,35 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Product } from '../models/product.model';
 import { Order, OrderStats } from '../models/order.model';
+import { environment } from '../../../environments/environment';
+
+export interface PageResponse<T> {
+    content: T[];
+    pageable: any;
+    last: boolean;
+    totalPages: number;
+    totalElements: number;
+    size: number;
+    number: number;
+    sort: any;
+    first: boolean;
+    numberOfElements: number;
+    empty: boolean;
+}
 
 @Injectable({
     providedIn: 'root'
 })
 export class ApiService {
 
-    private readonly baseUrl = 'http://localhost:8080/api';
+    private readonly baseUrl = environment.apiUrl;
 
     constructor(private http: HttpClient) { }
 
     // ===== PRODUTOS (Público) =====
 
-    getProducts(): Observable<Product[]> {
-        return this.http.get<Product[]>(`${this.baseUrl}/products`);
+    getProducts(page = 0, size = 20): Observable<PageResponse<Product>> {
+        return this.http.get<PageResponse<Product>>(`${this.baseUrl}/products?page=${page}&size=${size}`);
     }
 
     // ===== PEDIDOS (Público) =====
@@ -31,8 +46,8 @@ export class ApiService {
 
     // ===== ADMIN - Produtos =====
 
-    getAdminProducts(): Observable<Product[]> {
-        return this.http.get<Product[]>(`${this.baseUrl}/admin/products`);
+    getAdminProducts(page = 0, size = 20): Observable<PageResponse<Product>> {
+        return this.http.get<PageResponse<Product>>(`${this.baseUrl}/admin/products?page=${page}&size=${size}`);
     }
 
     createProduct(product: Partial<Product>): Observable<Product> {
@@ -45,9 +60,9 @@ export class ApiService {
 
     // ===== ADMIN - Pedidos =====
 
-    getAdminOrders(status?: string): Observable<Order[]> {
-        const params = status ? `?status=${status}` : '';
-        return this.http.get<Order[]>(`${this.baseUrl}/admin/orders${params}`);
+    getAdminOrders(status?: string, page = 0, size = 20): Observable<PageResponse<Order>> {
+        const statusParam = status ? `&status=${status}` : '';
+        return this.http.get<PageResponse<Order>>(`${this.baseUrl}/admin/orders?page=${page}&size=${size}${statusParam}`);
     }
 
     updateOrderStatus(id: number, status: string): Observable<Order> {

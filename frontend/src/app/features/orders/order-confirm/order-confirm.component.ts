@@ -66,6 +66,13 @@ import { Order } from '../../../core/models/order.model';
           <p>Pode retirar seu produto na geladeira. Obrigado!</p>
         </div>
 
+        <!-- Pedido cancelado -->
+        <div *ngIf="order.status === 'CANCELLED'" class="success-info" style="background: var(--color-danger-glow); border-color: rgba(239, 68, 68, 0.2);">
+          <div class="success-icon">❌</div>
+          <h3 style="color: var(--color-danger)">Pedido Cancelado</h3>
+          <p>Este pedido não pode mais ser processado.</p>
+        </div>
+
         <!-- Observação psicológica -->
         <div class="security-notice">
           <span class="notice-icon">🔒</span>
@@ -118,6 +125,11 @@ import { Order } from '../../../core/models/order.model';
     .status-released {
       background: var(--color-secondary-glow);
       color: var(--color-secondary-light);
+    }
+
+    .status-cancelled {
+      background: var(--color-danger-glow);
+      color: var(--color-danger);
     }
 
     .status-icon {
@@ -318,6 +330,7 @@ export class OrderConfirmComponent implements OnInit {
       case 'PENDING': return '⏳';
       case 'PAID': return '✅';
       case 'RELEASED': return '🔓';
+      case 'CANCELLED': return '❌';
       default: return '❓';
     }
   }
@@ -328,6 +341,7 @@ export class OrderConfirmComponent implements OnInit {
       case 'PENDING': return 'Aguardando Pagamento';
       case 'PAID': return 'Pagamento Confirmado';
       case 'RELEASED': return 'Produto Liberado';
+      case 'CANCELLED': return 'Pedido Cancelado';
       default: return this.order.status;
     }
   }

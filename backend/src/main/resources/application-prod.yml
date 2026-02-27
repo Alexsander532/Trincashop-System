@@ -3,10 +3,15 @@ server:
 
 spring:
   datasource:
-    url: ${DATABASE_URL}             # Ex: jdbc:postgresql://ep-xxx.neon.tech:5432/neondb?sslmode=require
+    url: ${DATABASE_URL}
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      max-lifetime: 600000
+      keepalive-time: 30000
+      idle-timeout: 300000
+      validation-timeout: 5000
 
   jpa:
     hibernate:
@@ -32,3 +37,20 @@ logging:
     com.trincashop: INFO
     org.springframework.security: WARN
     org.flywaydb: INFO
+
+# Swagger desabilitado em produção
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never

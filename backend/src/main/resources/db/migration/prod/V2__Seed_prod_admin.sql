@@ -2,6 +2,6 @@
 -- Apenas o usuário admin para produção (sem dados de teste)
 -- IMPORTANTE: Troque a senha antes de fazer deploy!
 
--- Senha: TROQUE_ANTES_DO_DEPLOY (gere um novo hash BCrypt)
+-- Senha temporária: admin123 (gere um novo hash BCrypt e atualize com sua senha real depois do deploy)
 INSERT INTO users (username, email, password, role, enabled)
-VALUES ('admin', 'admin@trincashop.com', '$2a$10$SUBSTITUA_ESTE_HASH_POR_UM_GERADO_LOCALMENTE_xxxxxxxxxxx', 'ADMIN', TRUE);
+VALUES ('admin', 'admin@trincashop.com', '$2a$10$7QEMiElHzGlm0EzBX9qN7.LRr5l3c6u9Hkh1UZBgflC3WfD/Bq4S6', 'ADMIN', TRUE);

@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface LoginResponse {
     token: string;
+    refreshToken: string;
     email: string;
     nome: string;
 }
@@ -12,8 +14,9 @@ export interface LoginResponse {
     providedIn: 'root'
 })
 export class AuthService {
-    private readonly baseUrl = 'http://localhost:8080/api/auth';
+    private readonly baseUrl = `${environment.apiUrl}/auth`;
     private readonly TOKEN_KEY = 'trincashop_admin_token';
+    private readonly REFRESH_TOKEN_KEY = 'trincashop_admin_refresh';
     private readonly USER_KEY = 'trincashop_admin_user';
 
     constructor(private http: HttpClient) { }
@@ -23,6 +26,9 @@ export class AuthService {
             tap(response => {
                 if (response && response.token) {
                     localStorage.setItem(this.TOKEN_KEY, response.token);
+                    if (response.refreshToken) {
+                        localStorage.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
+                    }
                     localStorage.setItem(this.USER_KEY, JSON.stringify({ nome: response.nome, email: response.email }));
                 }
             })
@@ -30,7 +36,23 @@ export class AuthService {
     }
 
     logout(): void {
+        const token = this.getToken();
+        if (token) {
+            // Tenta avisar ao backend para invalidar o token
+            this.http.post(`${this.baseUrl}/logout`, {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            }).subscribe({
+                next: () => this.clearStorage(),
+                error: () => this.clearStorage()
+            });
+        } else {
+            this.clearStorage();
+        }
+    }
+
+    private clearStorage(): void {
         localStorage.removeItem(this.TOKEN_KEY);
+        localStorage.removeItem(this.REFRESH_TOKEN_KEY);
         localStorage.removeItem(this.USER_KEY);
     }
 

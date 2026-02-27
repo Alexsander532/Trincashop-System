@@ -265,8 +265,8 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit(): void {
     this.apiService.getProducts().subscribe({
-      next: (products: Product[]) => {
-        this.products = products;
+      next: (page) => {
+        this.products = page.content;
         this.loading = false;
       },
       error: () => {
