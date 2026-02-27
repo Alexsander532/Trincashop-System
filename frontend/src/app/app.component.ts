@@ -48,16 +48,6 @@ import { filter } from 'rxjs';
       </div>
     </header>
 
-    <div class="anti-theft-banner" *ngIf="!isAdminRoute">
-      <div class="banner-track">
-        <span class="banner-msg">👀 Câmeras ativas • Cada produto é rastreado</span>
-        <span class="banner-msg">🔒 Sistema de segurança inteligente</span>
-        <span class="banner-msg">⚡ Pagamento rápido e seguro via PIX</span>
-        <span class="banner-msg">👀 Estamos te observando</span>
-        <span class="banner-msg">🔒 Todos os pedidos são registrados</span>
-        <span class="banner-msg">⚡ Compre com facilidade, pague com PIX</span>
-      </div>
-    </div>
 
     <main [class.admin-main]="isAdminRoute">
       <router-outlet />
@@ -178,33 +168,6 @@ import { filter } from 'rxjs';
       border-color: var(--color-text-muted);
     }
 
-    /* Banner anti-furto */
-    .anti-theft-banner {
-      background: linear-gradient(90deg, var(--color-primary-dark), var(--color-secondary-dark), var(--color-primary-dark));
-      overflow: hidden;
-      padding: 6px 0;
-      position: relative;
-    }
-
-    .banner-track {
-      display: flex;
-      gap: 60px;
-      animation: scrollBanner 30s linear infinite;
-      white-space: nowrap;
-    }
-
-    .banner-msg {
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: white;
-      flex-shrink: 0;
-      letter-spacing: 0.02em;
-    }
-
-    @keyframes scrollBanner {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
 
     main {
       min-height: calc(100vh - 64px - 60px);
