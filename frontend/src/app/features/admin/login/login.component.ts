@@ -21,7 +21,7 @@ import { AuthService } from '../../../core/services/auth.service';
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
           <div class="form-group">
             <label for="email">E-mail</label>
-            <input type="email" id="email" formControlName="email" class="form-control" placeholder="admin@trincashop.com" autocomplete="email">
+            <input type="email" id="email" formControlName="email" class="form-control" placeholder="Digite o email" autocomplete="email">
             <small *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="error-text">
               E-mail inválido
             </small>
@@ -30,7 +30,7 @@ import { AuthService } from '../../../core/services/auth.service';
           <div class="form-group">
             <label for="password">Senha</label>
             <div class="input-wrapper">
-              <input [type]="showPassword ? 'text' : 'password'" id="password" formControlName="password" class="form-control" placeholder="••••••••" autocomplete="current-password">
+              <input [type]="showPassword ? 'text' : 'password'" id="password" formControlName="password" class="form-control" placeholder="Digite a senha" autocomplete="current-password">
               <button type="button" class="toggle-password" (click)="showPassword = !showPassword" [attr.aria-label]="showPassword ? 'Ocultar senha' : 'Mostrar senha'">
                 <svg *ngIf="!showPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
