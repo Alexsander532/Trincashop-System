@@ -1,17 +1,18 @@
 # Stage 1: build
-FROM eclipse-temurin:17-jdk-alpine AS build
+FROM eclipse-temurin:21-jdk-alpine AS build
 WORKDIR /app
 
-COPY mvnw .
-COPY .mvn .mvn
+# Instala Maven
+RUN apk add --no-cache maven
+
 COPY pom.xml .
-RUN ./mvnw dependency:go-offline -q
+RUN mvn dependency:go-offline -q
 
 COPY src src
-RUN ./mvnw package -DskipTests -q
+RUN mvn package -DskipTests -q -Pproduction
 
 # Stage 2: runtime
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 COPY --from=build /app/target/*.jar app.jar
